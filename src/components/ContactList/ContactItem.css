@@ -1,0 +1,22 @@
+.contact__item {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+}
+.green {
+    color: green;
+}
+.contact__info {
+    display: inline-block;
+    margin: 0;
+}
+.red {
+    color: red;
+}
+.button {
+    background-color: transparent;
+    border: none;
+}
+.button:hover{
+    color: #fcd111
+}
