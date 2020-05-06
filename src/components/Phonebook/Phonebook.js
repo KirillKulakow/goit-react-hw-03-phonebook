@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ContactForm from '../ContactForm/ContactForm';
 import ContactItem from '../ContactList/ContactItem';
 import FilterContacts from '../FilterContacts/FilterContacts';
@@ -7,11 +7,11 @@ import {
     PBContainer,
     ContactList
 } from './Phonebook.module';
-import { saveLS, getLS } from '../LocalStorage/LocalStorage';
+import { saveLS, getLS } from '../../helpers/LocalStorage/LocalStorage';
 
 const isEmptyLocalStorage = () => {
     if(!getLS("contacts")){
-        saveLS("contacts", [])
+        saveLS("contacts", []);
         return []
     };
     return getLS("contacts");
@@ -22,12 +22,14 @@ const Phonebook = () => {
     const [filterContacts, setFilterContacts] = useState([]);
 
     const addToContacts = (contact) => {
-        const contactsToLocal = [...contacts];
-        contactsToLocal.push(contact);
-        setContacts([...contacts, contact]);
-        setFilterContacts([...contacts, contact]);
-        saveLS("contacts", contactsToLocal)
+        const contactsNew = [...contacts, contact];
+        setContacts(contactsNew);
     };
+
+    useEffect(() => {
+        saveLS("contacts", contacts);
+        setFilterContacts(contacts);
+    }, [contacts]);
 
     const filteredContacts = (filterValue) => {
         const newContacts = contacts.filter(contact => (contact.name.toLowerCase()).includes(filterValue.toLowerCase()));
@@ -37,8 +39,6 @@ const Phonebook = () => {
     const deleteContact = (id) => {
         const newContacts = contacts.filter((contact) => contact.id !== id);
         setContacts(newContacts);
-        setFilterContacts(newContacts);
-        saveLS("contacts", newContacts);
     };
 
     return (
@@ -53,7 +53,7 @@ const Phonebook = () => {
                 <>
                 <FilterContacts filteredContacts={filteredContacts}/>
                 <ContactList>
-                    {(filterContacts.length ? filterContacts : contacts).map((contact) => (
+                    {filterContacts.map((contact) => (
                         <ContactItem key={contact.id} {...contact} deleteContact={deleteContact}/>
                     ))}
                 </ContactList></>
